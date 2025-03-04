@@ -26,7 +26,7 @@ jobs:
           echo "TEST_MODE=${{ github.event.inputs.test_mode || 'false' }}" >> deployment.marker
       
       - name: Upload deployment marker
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: deployment-marker
           path: deployment.marker
