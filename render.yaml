@@ -3,7 +3,7 @@ services:
     name: odoo-app
     env: docker-compose
     dockerComposeFile: ./docker-compose.yml
-    dockerfilePath: ./
+    dockerfilePath: ./docker-compose.yml
     plan: standard
     # Adjust the health check path as necessary for your Odoo setup.
     healthCheckPath: /web

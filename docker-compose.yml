@@ -14,7 +14,7 @@ services:
 
   odoo:
     container_name: odoo
-    image: odoo:18.1
+    image: odoo:18
     environment:
       HOST: postgres
       USER: odoo
