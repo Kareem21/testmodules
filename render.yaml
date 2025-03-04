@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: odoo-app
+    env: docker-compose
+    dockerComposeFile: ./docker-compose.yml
+    dockerfilePath: ./
+    plan: standard
+    # Adjust the health check path as necessary for your Odoo setup.
+    healthCheckPath: /web
+    envVars:
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+      - key: POSTGRES_USER
+        value: odoo

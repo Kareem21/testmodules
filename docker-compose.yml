@@ -4,12 +4,10 @@ services:
   postgres:
     container_name: odoo-postgres
     image: postgres:14.1-alpine
-    ports:
-      - 5432:5432
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: secret
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # Render provides this value
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: always
@@ -20,8 +18,8 @@ services:
     environment:
       HOST: postgres
       USER: odoo
-      PASSWORD: secret
-      # Added for testing
+      PASSWORD: ${POSTGRES_PASSWORD}
+      # Additional environment variables for testing and logging
       TEST_ENABLE: ${TEST_ENABLE:-False}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       WITHOUT_DEMO: ${WITHOUT_DEMO:-False}
@@ -34,12 +32,9 @@ services:
       - ./modules:/mnt/extra-addons
       - data:/var/lib/odoo
     restart: always
-    links:
-      - postgres
-    # This command is used when TEST_ENABLE is True
-    command: >
-      ${ODOO_COMMAND:-}
-      
+    # Override the command to listen on the Render-assigned PORT (defaulting to 8069 locally)
+    command: ${ODOO_COMMAND:-odoo --http-port ${PORT:-8069}}
+
 volumes:
   postgres-data:
   data:
