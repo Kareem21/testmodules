@@ -6,7 +6,12 @@ services:
     plan: standard
     healthCheckPath: /web
     envVars:
-      - key: POSTGRES_PASSWORD
+      - key: HOST
+        # Replace with your Render Managed PostgreSQL hostname, e.g., "mydb-12345.render.com"
+        value: dpg-cv3djqin91rc739ernr0-a
+      - key: USER
+        value: mytestdb_aa42_user
+      - key: PASSWORD
         generateValue: true
-      - key: POSTGRES_USER
-        value: odoo
+      - key: POSTGRES_DB
+        value: postgres
