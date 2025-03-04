@@ -8,6 +8,4 @@ COPY config /etc/odoo
 COPY modules /mnt/extra-addons
 
 EXPOSE 8069
-
-# This works fine; Odoo will pick up PGHOST, PGPORT, etc. from environment
-CMD ["odoo", "--http-port", "8069"]
+CMD ["odoo", "-i", "base", "--http-port", "${PORT:-8069}"]
