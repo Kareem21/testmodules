@@ -1,46 +1,45 @@
 version: '3.8'
+
 services:
-  web:
+  postgres:
+    container_name: odoo-postgres
+    image: postgres:14.1-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+
+  odoo:
+    container_name: odoo
     image: odoo:18.1
+    environment:
+      HOST: postgres
+      USER: odoo
+      PASSWORD: secret
+      # Added for testing
+      TEST_ENABLE: ${TEST_ENABLE:-False}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      WITHOUT_DEMO: ${WITHOUT_DEMO:-False}
     depends_on:
-      - db
+      - postgres
+    ports:
+      - 8069:8069
     volumes:
       - ./config:/etc/odoo
-      - ./modules_to_test:/mnt/extra-addons/modules_to_test
-      - ./dependencies:/mnt/extra-addons/dependencies
-      - ./test_reports:/var/log/odoo
-    environment:
-      - HOST=db
-      - USER=odoo
-      - PASSWORD=odoo
-      # Testing specific variables
-      - TEST_ENABLE=True
-      - LOG_LEVEL=test
-      - MODULES_TO_TEST=${MODULES_TO_TEST:-all}
-      - WITHOUT_DEMO=False
+      - ./modules:/mnt/extra-addons
+      - data:/var/lib/odoo
+    restart: always
+    links:
+      - postgres
+    # This command is used when TEST_ENABLE is True
     command: >
-      -- --test-enable --stop-after-init --log-level=test
-         --test-tags=${TEST_TAGS:-/}
-         -d test_db
-         -i ${MODULES_TO_TEST}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 5s
-
-  db:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_PASSWORD=odoo
-      - POSTGRES_USER=odoo
-      - POSTGRES_DB=test_db
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    tmpfs:
-      - /var/lib/postgresql/data
-
+      ${ODOO_COMMAND:-}
+      
 volumes:
-  db-data:
-    driver: local
+  postgres-data:
+  data:
