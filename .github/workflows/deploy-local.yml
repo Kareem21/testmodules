@@ -1,0 +1,52 @@
+name: Deploy to Local Environment
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Run in test mode'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  notify-local:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Create deployment marker
+        run: |
+          echo "GITHUB_SHA=${{ github.sha }}" > deployment.marker
+          echo "TIMESTAMP=$(date)" >> deployment.marker
+          echo "TEST_MODE=${{ github.event.inputs.test_mode || 'false' }}" >> deployment.marker
+      
+      - name: Upload deployment marker
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-marker
+          path: deployment.marker
+          
+    #   - name: Send webhook to local machine (if configured)
+    #     if: env.LOCAL_WEBHOOK_URL != ''
+    #     run: |
+    #       # This step can be used if you set up a local webhook receiver
+    #       curl -X POST ${{ env.LOCAL_WEBHOOK_URL }} \
+    #         -H "Content-Type: application/json" \
+    #         -d '{"sha":"${{ github.sha }}","repository":"${{ github.repository }}","test_mode":"${{ github.event.inputs.test_mode || 'false' }}"}'
+    #     env:
+    #       LOCAL_WEBHOOK_URL: ${{ secrets.LOCAL_WEBHOOK_URL }}
+          
+      - name: Instructions for local update
+        run: |
+          echo "To update your local environment, run:"
+          echo "git pull"
+          if [ "${{ github.event.inputs.test_mode }}" = "true" ]; then
+            echo "./scripts/update-local.sh test"
+          else
+            echo "./scripts/update-local.sh"
+          fi
