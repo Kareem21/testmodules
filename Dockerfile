@@ -8,4 +8,4 @@ COPY config /etc/odoo
 COPY modules /mnt/extra-addons
 
 EXPOSE 8069
-CMD ["odoo", "-i", "base", "--http-port", "${PORT:-8069}"]
+CMD ["odoo", "-i", "base", "--http-port", "8069"]
