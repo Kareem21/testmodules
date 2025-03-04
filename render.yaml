@@ -6,12 +6,13 @@ services:
     plan: standard
     healthCheckPath: /web
     envVars:
-      - key: HOST
-        # Replace with your Render Managed PostgreSQL hostname, e.g., "mydb-12345.render.com"
+      - key: PGHOST
         value: dpg-cv3djqin91rc739ernr0-a
-      - key: USER
+      - key: PGPORT
+        value: "5432"
+      - key: PGDATABASE
+        value: mytestdb_aa42
+      - key: PGUSER
         value: mytestdb_aa42_user
-      - key: PASSWORD
-        generateValue: true
-      - key: POSTGRES_DB
-        value: postgres
+      - key: PGPASSWORD
+        value: "S3D3y1nOjq8PqnnfbQDyTSuvPTrPeZjm"
