@@ -15,5 +15,4 @@ COPY config /etc/odoo
 COPY modules /mnt/extra-addons
 
 EXPOSE 8069
-# Explicitly specify the database name
 CMD ["odoo", "--database", "mytestdb_aa42", "-i", "base", "--http-port", "8069"]
